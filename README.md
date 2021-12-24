@@ -1,14 +1,10 @@
 # TOCfinalproject2021
+
 ## HeyWeather 
 
-A Line bot based on a finite state machine
-
-This LINE bot is mostly built by [LINE messaging API](https://developers.line.biz/en/docs/messaging-api/overview/), and a little Flask as web application framework to host it on Heroku.
-
-Finite State Machine model is implemeted in Weather Robot. Each feature is represented by a state, and the button that user pressed on the carousel template will trigger the transitions between states. The FSM graph will be mentioned below.
-
 ## 構想
-將[中央氣象局](https://www.cwb.gov.tw/V8/C/)的天氣資訊，以及[空氣品質監測網](https://airtw.epa.gov.tw/)空汙指標，結合在此機器人，可直接透過此機器人查詢氣象和空氣品質相關資訊，不須分開使用兩個網站查詢，增加使用上的便利性。
+將[中央氣象局](https://www.cwb.gov.tw/V8/C/)的天氣資訊，以及[空氣品質監測網](https://airtw.epa.gov.tw/)空汙指標，結合在此LINE bot上，讓使用者可直接透過LINE查詢氣象和空氣品質相關資訊，無須再查詢網站，且不須分開使用兩個網站查詢，增加使用上的便利性。
+
 ## 功能
 * 氣象
     * 各地今天天氣
@@ -20,11 +16,7 @@ Finite State Machine model is implemeted in Weather Robot. Each feature is repre
 
 ## 好友資訊
 * 可直接開啟Line掃描，或是使用Line ID搜尋好友
-![](https://i.imgur.com/0kMFEJv.png)
-* 搜尋到結果後，可加入聊天
-* ![](https://i.imgur.com/wnru1HY.png)
-
-
+![1](https://user-images.githubusercontent.com/62125889/147336017-f2f93b36-0e03-422b-8f17-5ff21a9c961f.PNG)
 
 ## 程式使用的技術
 * web crawling
@@ -33,49 +25,48 @@ Finite State Machine model is implemeted in Weather Robot. Each feature is repre
 使用[中央氣象局API](https://opendata.cwb.gov.tw/dist/opendata-swagger.html)上的資料，擷取為JSON格式，並取出相關資料，在line聊天室中以文字回覆。
 * Heroku
 deploy webhooks on Heroku
-* 環境 : python 3.6
+* 環境 : python 3.9
 
 ## 操作說明
 * 基本操作
     * 所有用到英文的指令大小寫皆可
-    * 每結束一次操作，請重新輸入`hi`或`graph`以再次啟動功能
-* 請輸入`hi`或`graph`以啟動功能
-    * `hi`
+    * 每結束一次操作，請重新輸入`任何訊息`以再次啟動功能
+* 請輸入任何訊息以啟動功能
+    * `任何訊息`
     傳回主選單，主選單分為四個功能:
         * 今天天氣
         * 今天空氣品質
         * 一周天氣預報
         * 衛星雲圖
+    若輸入非上述四個功能 -> 回傳`請輸入有效訊息`
     * `graph`
     傳回fsm圖片
-    * 輸入非`hi`或`graph` -> 回傳`請輸入hi或graph以啟動功能`
 * 主選單
     * 今天天氣
         * `請輸入您的城市` -> 
         回傳該城市的今明兩天白天夜晚天氣 -> 
-        請重新輸入`hi`或`graph`以再次啟動功能。
-        * 輸入`不存在的城市` -> 回傳`該城市不存在，請輸入hi或graph以再次啟動功能`
+        請重新輸入`任何訊息`以再次啟動功能。
+        * 輸入`不存在的城市` -> 回傳`該城市不存在，請輸入任何訊息以再次啟動功能`
     * 今天空氣品質
         * 回傳即時空氣品質指標圖 ->
-        請重新輸入`hi`或`graph`以再次啟動功能。
+        請重新輸入`任何訊息`以再次啟動功能。
     * 一周天氣預報
         * `請輸入您的城市` -> 
         回傳該城市從當天起一週內的天氣概況 -> 
-        請重新輸入`hi`或`graph`以再次啟動功能。
-        * 輸入`不存在的城市` -> 回傳`該城市不存在，請輸入hi或graph以再次啟動功能`
+        請重新輸入`任何訊息`以再次啟動功能。
+        * 輸入`不存在的城市` -> 回傳`該城市不存在，請輸入任何訊息以再次啟動功能`
     * 衛星雲圖
         * 回傳即時衛星雲圖 ->
-        請重新輸入`hi`或`graph`以再次啟動功能。
-    * 輸入`非主選單上的四個功能` -> 回傳`請輸入hi或graph以再次啟動功能`
+        請重新輸入`任何訊息`以再次啟動功能。
+    * 輸入`非主選單上的四個功能` -> 回傳`請輸入有效訊息`
 ## fsm架構圖
-![](https://weatherobot.herokuapp.com/show-fsm)
+![fsm](https://user-images.githubusercontent.com/62125889/147278700-6e102991-0fc7-4160-8631-b69dc73946c3.png)
 ### state說明
 The initial state is set to `user`.
 
-Every time `user` state is triggered to `advance` to final state, it will `go_back` to `user` state after the bot replies corresponding message.
-* `user` :　輸入`hi`或`graph`可進入不同state
-    * 輸入`hi` : 進入`state`state
-    * 輸入`graph` : 進入`graph`state
+* `user` :
+    * 輸入"任意文字": 進入`state`state
+    * 輸入 `graph` :  進入`graph`state
 * `graph` : 回傳fsm架構圖
 * `state` : 回傳主選單，可依據使用者需求，選擇四個不同的功能
 * `todayweather` : 選單上`今天天氣`的功能，回傳`請輸入您的城市`
@@ -86,21 +77,25 @@ Every time `user` state is triggered to `advance` to final state, it will `go_ba
 * `air` : 選單上`今天空氣品質`的功能，回傳即時空氣品質指標圖
 
 ## 使用畫面
-* ### 加入好友歡迎頁面
-![](https://i.imgur.com/PtMqJX6.png)
-* ### 輸入hi後，主選單頁面
-![](https://i.imgur.com/Jt8ppR1.png)
+* ### 輸入任何訊息後，主選單頁面
+![265684597_1465584667169242_5939283497250151429_n](https://user-images.githubusercontent.com/62125889/147279839-2fdd6257-38bf-4f04-85bb-eca855a844f1.jpg)
 * ### 點選主選單中的`今天天氣`
-![](https://i.imgur.com/BC4HraH.png)
-* ### 輸入城市格式錯誤畫面
-![](https://i.imgur.com/gjx1bSC.png)
-* ### 點選主選單中的`一周天氣預報`
-![](https://i.imgur.com/tgG0oZp.png)
+![263916346_1161844294590265_3389826170296492978_n](https://user-images.githubusercontent.com/62125889/147279886-e82cfa40-5f25-4891-a718-0eefe3deaeda.jpg)
+* ### 若輸入錯誤的城市名稱
+![269609261_393504769221007_2226632813170593100_n](https://user-images.githubusercontent.com/62125889/147280216-d9d2e04c-99ff-4d13-9d96-1c58788d72f4.jpg)
+* ### 輸入任何訊息回到主選單
+![264422457_438985631179457_6509652347676183131_n](https://user-images.githubusercontent.com/62125889/147279987-de0e8ee4-3fbf-438e-9b2a-b68f9c17f515.jpg)
 * ### 點選主選單中的`今天空氣品質`
-![](https://i.imgur.com/tobNaOi.png)
+![263749212_440383787595552_2159878988613591157_n](https://user-images.githubusercontent.com/62125889/147280063-76a1d9f1-da80-4b2e-8c51-293261191d9a.jpg)
+* ### 點選主選單中的`一周天氣預報`
+![267354912_1109656509780168_7166240810248334379_n](https://user-images.githubusercontent.com/62125889/147280102-d377cc05-cfd6-4b32-ab92-8e06026c43a3.jpg)
+![264832971_290058293076430_2507235334071099723_n](https://user-images.githubusercontent.com/62125889/147280119-0664e5e7-022f-42eb-bed2-48dd24cd2122.jpg)
 * ### 點選主選單中的`衛星雲圖`
-![](https://i.imgur.com/bC7wkql.png)
+![268827946_3035650953360834_7494902108099708115_n](https://user-images.githubusercontent.com/62125889/147280310-58a07a76-09a0-4ceb-a141-420cd634997b.jpg)
+
 * ### 輸入`graph`後，fsm架構圖
-![](https://i.imgur.com/UhP7IJa.png)
+![263590081_510765303986723_1207643524709011144_n](https://user-images.githubusercontent.com/62125889/147280317-318ba70f-d001-4afe-aa93-ac04a0c26520.jpg)
+
 * ### 輸入錯誤時的畫面
-![](https://i.imgur.com/BFUvQIs.png)
+![263674518_1178492676014885_4250831795958919189_n](https://user-images.githubusercontent.com/62125889/147280342-3c18ab43-9b0a-40da-b2a8-0c91fd2d8809.jpg)
+
